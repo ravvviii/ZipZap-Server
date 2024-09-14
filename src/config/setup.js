@@ -34,6 +34,8 @@ export const admin = new AdminJS({
         { resource: Models.Branch, },
         { resource: Models.Product, },
         { resource: Models.Category, },
+        { resource: Models.Order, },
+        { resource: Models.Counter, },
     ],
     branding: {
         companyName: "ZipZap",
