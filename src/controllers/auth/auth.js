@@ -19,9 +19,17 @@ const generateTokens = (user) => {
   };
   
 
+  const isValidPhoneNumber = (phone) => {
+    return /^\d{10}$/.test(phone); // Adjust regex according to your needs
+  };
+
   export const loginCustomer = async(req, reply)=>{
     try {
         const {phone} = req.body
+
+        if (!isValidPhoneNumber(phone)) {
+          return reply.status(400).send({ message: "Invalid phone number format" });
+        }
         let customer = await Customer.findOne({phone})
 
         if(!customer){
@@ -49,41 +57,41 @@ const generateTokens = (user) => {
 
 
 
-  export const loginDeliveryPartner = async(req, reply)=>{
-    try {
-        const {email, password} = req.body
-        const  deliveryPartner = await DeliveryPartner.findOne({email})
+    export const loginDeliveryPartner = async(req, reply)=>{
+      try {
+          const {email, password} = req.body
+          const  deliveryPartner = await DeliveryPartner.findOne({email})
 
-        if(!deliveryPartner){
-            return reply
-            .status(404)
-            .send({message:"Delivery Partner not found", error})
-        }
+          if(!deliveryPartner){
+              return reply
+              .status(404)
+              .send({message:"Delivery Partner not found"})
+          }
 
-        const isMatch = password === deliveryPartner.password
+          const isMatch = password === deliveryPartner.password
 
-        if(!isMatch){
-            return reply
-            .status(400)
-            .send({message:"invalid Details"})
-        }
-        
+          if(!isMatch){
+              return reply
+              .status(400)
+              .send({message:"invalid Details"})
+          }
+          
 
 
-        const {accessToken, refreshToken} = generateTokens(deliveryPartner);
+          const {accessToken, refreshToken} = generateTokens(deliveryPartner);
 
-        return reply.send({
-                message:"Login Successful",
-                accessToken,
-                refreshToken,
-                deliveryPartner
-        });
+          return reply.send({
+                  message:"Login Successful",
+                  accessToken,
+                  refreshToken,
+                  deliveryPartner
+          });
 
-    } catch (error) {
-        return reply.status(500).send({message:"We are facing issue", error})
-        
+      } catch (error) {
+          return reply.status(500).send({message:"We are facing issue", error})
+          
+      }
     }
-  }
 
 
 
